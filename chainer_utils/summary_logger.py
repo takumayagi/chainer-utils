@@ -15,7 +15,7 @@ import argparse
 
 def get_commit_id():
     cmd = "git log -n 1 --format=%H"
-    out = subprocess.check_output( cmd.split(" "))
+    out = subprocess.check_output(cmd.split(" "))
     assert isinstance(out, str)
     return out.rstrip("\r\n")
 
@@ -26,7 +26,7 @@ class SummaryLogger(object):
         self._date_str = logger.dir_name
         self._output_path = output_path
         self._summ["log_path"] = logger.log_fn
-        self._summ["commit_id"] = get_commit_id()
+        # self._summ["commit_id"] = get_commit_id()
 
     def update(self, key, value):
         self._summ[key] = value
@@ -53,7 +53,7 @@ class SummaryLogger(object):
             return
         if self._date_str in current.index:
             # JOIN by the joined keys
-            current = current.loc[:, current.columns.union(new_summary.columns)]
+            current = current.loc[:, current.index.intersection(current.columns.union(new_summary.columns))]
             current.update(new_summary)
         else:
             current = current.append(new_summary)
